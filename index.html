@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Magical 3D Birthday Surprise! 🎊</title>
+  <meta name="description" content="A vibrant and magical 3D Birthday Surprise web experience with interactive games, 3D balloons, blowing candles, and cheerful music!">
+  <!-- Playful & Rounded Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  <!-- Material Symbols for beautiful icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <!-- Magical custom cursor sparkle container -->
+  <div id="sparkle-container"></div>
+
+  <!-- Ambient 3D background canvas for floating balloons and stars -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- ==================== 1. ENTRY INVITATION CARD ==================== -->
+  <div id="entry-overlay" class="overlay">
+    <div class="entry-card glass">
+      <div class="card-glow"></div>
+      <div class="card-icon">✉️</div>
+      <h1>A Special Surprise Awaits!</h1>
+      <p>Someone created a magical, interactive birthday surprise just for you. Enter the special 6-digit passcode to unlock the portal of joy!</p>
+      <div class="passcode-container">
+        <input type="text" id="passcode-input" maxlength="6" placeholder="yymmdd" aria-label="6-digit Birthday Passcode" pattern="[0-9]*" inputmode="numeric" autocomplete="off">
+        <p id="passcode-error" class="error-msg hidden">❌ Incorrect passcode! Try again.</p>
+      </div>
+      <button id="btn-enter" class="pulse-button btn-gold" aria-label="Enter the birthday portal">
+        <span>Open the Magic ✨</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APPLICATION CONTAINER ==================== -->
+  <div id="app-container" class="hidden">
+    
+    <!-- Floating Musical vinyl record controller -->
+    <div class="music-controller glass" id="music-widget">
+      <div class="vinyl-disc" id="vinyl-disc">
+        <div class="vinyl-center"></div>
+      </div>
+      <div class="music-info">
+        <span class="music-title">Happy Birthday Chiptune ♪</span>
+        <div class="music-buttons">
+          <button id="btn-music-toggle" class="icon-btn" aria-label="Play or pause music">
+            <span class="material-symbols-rounded">play_arrow</span>
+          </button>
+          <div class="volume-slider-container">
+            <span class="material-symbols-rounded">volume_down</span>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" aria-label="Volume level">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 2. SURPRISE REVEAL SECTION ==================== -->
+    <section id="reveal-section" class="active-section">
+      <div class="scene-3d-wrapper">
+        <div class="gift-box-container" id="gift-box-wrapper">
+          <div class="gift-shadow"></div>
+          <!-- 3D CSS Box -->
+          <div class="gift-box" id="gift-box">
+            <!-- Box Sides -->
+            <div class="gift-side side-front"></div>
+            <div class="gift-side side-back"></div>
+            <div class="gift-side side-left"></div>
+            <div class="gift-side side-right"></div>
+            <div class="gift-side side-bottom"></div>
+            <!-- Box Lid -->
+            <div class="gift-lid" id="gift-lid">
+              <div class="lid-side lid-top"></div>
+              <div class="lid-side lid-front"></div>
+              <div class="lid-side lid-back"></div>
+              <div class="lid-side lid-left"></div>
+              <div class="lid-side lid-right"></div>
+              <div class="ribbon-bow">🎀</div>
+            </div>
+          </div>
+        </div>
+        <p class="click-instruction pulse">🎁 Click the Gift Box to Unwrap the Magic!</p>
+      </div>
+
+      <!-- Hearts & Confetti Rising Surprise Card -->
+      <div id="surprise-card" class="glass card-hidden">
+        <div class="card-sparkle"></div>
+        <h2>Surprise! Today is all about YOU! 🎉</h2>
+        <div class="card-message">
+          <p>Every moment of this day is a celebration of how amazing you are. May your birthday be filled with joy, laughter, and all your favorite things. Here's to YOU — Happy Birthday! 🥳✨</p>
+        </div>
+        <button id="btn-continue" class="btn-gold" aria-label="Continue to celebration dashboard">
+          <span>Go to Celebration Dashboard 🌟</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== 3. CELEBRATION DASHBOARD ==================== -->
+    <section id="dashboard-section" class="hidden-section">
+      
+      <header class="dashboard-header text-center">
+        <h1 class="sparkle-text">Let's Celebrate You! 🎉</h1>
+        <p class="subtitle">Explore the interactive birthday festival designed just for you!</p>
+      </header>
+
+      <!-- Grid layout: Countdown & Interactive games -->
+      <div class="dashboard-grid">
+        
+        <!-- ROW 1: Countdown Clock -->
+        <div class="countdown-card glass full-width">
+          <h3>⏳ The Birthday Countdown</h3>
+          <p class="timer-desc">Counting down to midnight of this beautiful day</p>
+          <div class="countdown-timer" id="countdown-timer">
+            <div class="time-block">
+              <span class="time-number" id="cd-hours">00</span>
+              <span class="time-label">Hours</span>
+            </div>
+            <div class="colon">:</div>
+            <div class="time-block">
+              <span class="time-number" id="cd-minutes">00</span>
+              <span class="time-label">Minutes</span>
+            </div>
+            <div class="colon">:</div>
+            <div class="time-block">
+              <span class="time-number" id="cd-seconds">00</span>
+              <span class="time-label">Seconds</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 2: Games Center -->
+        <div class="games-card glass full-width">
+          <div class="games-header">
+            <h2>🎮 Interactive Mini-Games Center</h2>
+            <div class="games-tabs">
+              <button class="tab-btn active" data-tab="tab-blow" id="tab-btn-blow">
+                <span class="tab-icon">🎂</span> Blow Candles
+              </button>
+              <button class="tab-btn" data-tab="tab-unwrap" id="tab-btn-unwrap">
+                <span class="tab-icon">🎁</span> Gift Unwrap
+              </button>
+              <button class="tab-btn" data-tab="tab-pop" id="tab-btn-pop">
+                <span class="tab-icon">🎈</span> Pop Balloons
+              </button>
+            </div>
+          </div>
+
+          <div class="games-content">
+            
+            <!-- GAME 1: BLOW THE CANDLES -->
+            <div class="tab-panel active" id="tab-blow">
+              <div class="game-instructions">
+                <h4>🎂 Blow Out the Birthday Candles!</h4>
+                <p>Rapidly click/tap the big blow button or the cake canvas to create powerful puffs of air and blow out all 5 glowing candles on the 3D birthday cake!</p>
+              </div>
+              
+              <div class="game-play-area">
+                <!-- 3D Cake Container -->
+                <div class="canvas-3d-wrapper">
+                  <div class="glow-backdrop"></div>
+                  <canvas id="cake-canvas"></canvas>
+                  <div class="blow-wind-indicator" id="wind-indicator">💨</div>
+                </div>
+
+                <div class="game-controls">
+                  <div class="progress-bar-container">
+                    <label for="blow-progress">💨 Blow Pressure Meter</label>
+                    <div class="progress-track">
+                      <div class="progress-fill" id="blow-progress"></div>
+                    </div>
+                  </div>
+                  <button id="btn-blow" class="pulse-button btn-gold" aria-label="Tap to blow candles">
+                    <span>💨 TAP TO BLOW! 💨</span>
+                  </button>
+                  <div class="candles-status">
+                    Candles Lit: <span id="candles-lit-count">5</span> / 5
+                  </div>
+                  <button id="btn-reset-cake" class="btn-secondary hidden" aria-label="Relight candles">
+                    <span>🔄 Relight Candles</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- GAME 2: GIFT UNWRAP -->
+            <div class="tab-panel" id="tab-unwrap">
+              <div class="game-instructions">
+                <h4>🎁 Mystery Birthday Wrap-Peel!</h4>
+                <p>Click and peel off the layers of wrapping paper from the mysterious magical gift box to reveal your beautiful wisdom scroll.</p>
+              </div>
+
+              <div class="game-play-area vertical-layout">
+                <div class="unwrap-container">
+                  <!-- Gift wrap layers -->
+                  <div class="gift-box-peel" id="gift-peel-container">
+                    <!-- Ribbons and labels -->
+                    <div class="ribbon-horizontal" id="peel-ribbon-h"></div>
+                    <div class="ribbon-vertical" id="peel-ribbon-v"></div>
+                    <div class="ribbon-knot" id="peel-ribbon-knot">🎀</div>
+                    
+                    <!-- Paper wraps -->
+                    <div class="peel-layer paper-outer" id="peel-layer-1" data-side="top">
+                      <div class="wrap-pattern stripes"></div>
+                      <span class="peel-hint">Layer 1: Peel Me! 🌟</span>
+                    </div>
+                    <div class="peel-layer paper-mid" id="peel-layer-2" data-side="right">
+                      <div class="wrap-pattern dots"></div>
+                      <span class="peel-hint">Layer 2: Peel Me! ✨</span>
+                    </div>
+                    <div class="peel-layer paper-inner" id="peel-layer-3" data-side="left">
+                      <div class="wrap-pattern stars"></div>
+                      <span class="peel-hint">Layer 3: Almost There! 🔥</span>
+                    </div>
+                    <div class="peel-layer paper-core" id="peel-layer-4" data-side="bottom">
+                      <div class="wrap-pattern hearts"></div>
+                      <span class="peel-hint">Final Layer! ❤️</span>
+                    </div>
+
+                    <!-- Inner Scroll (hidden until unwrapped) -->
+                    <div class="scroll-surprise card-hidden" id="scroll-surprise">
+                      <div class="scroll-ribbon"></div>
+                      <div class="scroll-paper">
+                        <h5>📜 Scroll of Birthday Wisdom</h5>
+                        <p id="scroll-quote">"Count your life by smiles, not tears. Count your age by friends, not years."</p>
+                        <span class="scroll-signature">✨ Sent with Love ✨</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="game-controls">
+                  <p class="unwrapped-status" id="unwrap-status-text">Layers remaining: 4/4</p>
+                  <button id="btn-reset-gift" class="btn-secondary hidden" aria-label="Rewrap gift">
+                    <span>🔄 Wrap It Back Up</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- GAME 3: BALLOON POP -->
+            <div class="tab-panel" id="tab-pop">
+              <div class="game-instructions">
+                <h4>🎈 Helium Pop-a-Thon!</h4>
+                <p>Click or tap floating balloons before they fly out of the festival zone! Be quick — you have 30 seconds to score as many birthday points as you can!</p>
+              </div>
+
+              <div class="game-play-area vertical-layout">
+                <!-- Scoreboard -->
+                <div class="scoreboard glass">
+                  <div class="score-item">
+                    <span class="score-label">Score 🎈:</span>
+                    <span class="score-val" id="pop-score">0</span>
+                  </div>
+                  <div class="score-item">
+                    <span class="score-label">Timer ⏳:</span>
+                    <span class="score-val" id="pop-timer">30s</span>
+                  </div>
+                  <div class="score-item">
+                    <span class="score-label">Best 🏆:</span>
+                    <span class="score-val" id="pop-highscore">0</span>
+                  </div>
+                </div>
+
+                <!-- Interactive Balloon Zone -->
+                <div class="balloon-zone" id="balloon-zone">
+                  <div class="zone-glow"></div>
+                  <!-- Game Start overlay inside zone -->
+                  <div class="zone-overlay" id="zone-start-overlay">
+                    <span class="material-symbols-rounded play-icon">celebration</span>
+                    <button id="btn-start-balloon-game" class="pulse-button btn-gold" aria-label="Start balloon game">
+                      <span>Start Pop Party! 🎈</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Core Javascript code -->
+  <script src="app.js"></script>
+</body>
+</html>
